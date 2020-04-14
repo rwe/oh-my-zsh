@@ -58,20 +58,20 @@ function _omz_git_prompt_status() {
   local -A prefix_constant_map
   prefix_constant_map=(
     '\? '               'UNTRACKED'
-    '1 A\. N\.\.\. '    'ADDED'
-    '1 M\. N\.\.\. '    'MODIFIED'
-    '1 MM N\.\.\. '     'MODIFIED'
-    '1 \.M N\.\.\. '    'MODIFIED'
-    '1 AM N\.\.\. '     'MODIFIED'
+    '! '                'UNTRACKED'  # ignored
+    '1 A[.MD] N\.\.\. ' 'ADDED'
+    '1 M[.MD] N\.\.\. ' 'STAGED_CHANGE'
+    '1 [.AM]M N\.\.\. ' 'MODIFIED'
     '1 \.T N\.\.\. '    'MODIFIED'
     '2 .. '             'RENAMED'
-    '1 \.D '            'DELETED'
+    '1 [A.]D '          'DELETED'
     '1 D\. '            'DELETED'
     'u .. '             'UNMERGED'
     '# branch\.ab \+([1-9][0-9]*) -(0)'           'AHEAD'
     '# branch\.ab \+(0) -([1-9][0-9]*)'           'BEHIND'
     '# branch\.ab \+([1-9][0-9]*) -([1-9][0-9]*)' 'DIVERGED'
     'stashed'   'STASHED'
+    '1 M\. S\.\.\. '  'ADDED'
     '1 .. SC..' 'SUBMODULE_HAS_COMMIT'
     '1 .. S..U' 'SUBMODULE_HAS_UNTRACKED'
     '1 .. S.M.' 'SUBMODULE_HAS_MODIFIED'
@@ -83,6 +83,7 @@ function _omz_git_prompt_status() {
     'UNTRACKED' "$ZSH_THEME_GIT_PROMPT_UNTRACKED"
     'ADDED'     "$ZSH_THEME_GIT_PROMPT_ADDED"
     'MODIFIED'  "$ZSH_THEME_GIT_PROMPT_MODIFIED"
+    'STAGED_CHANGE'  "$ZSH_THEME_GIT_PROMPT_STAGED_CHANGE"
     'RENAMED'   "$ZSH_THEME_GIT_PROMPT_RENAMED"
     'DELETED'   "$ZSH_THEME_GIT_PROMPT_DELETED"
     'UNMERGED'  "$ZSH_THEME_GIT_PROMPT_UNMERGED"
@@ -97,7 +98,7 @@ function _omz_git_prompt_status() {
 
   # The order that the prompt displays should be added to the prompt
   local -a status_constants=(
-    UNTRACKED ADDED MODIFIED RENAMED DELETED
+    UNTRACKED ADDED MODIFIED RENAMED DELETED STAGED_CHANGE
     SUBMODULE_HAS_COMMIT
     SUBMODULE_HAS_UNTRACKED
     SUBMODULE_HAS_MODIFIED
