@@ -55,20 +55,20 @@ function _omz_git_prompt_status() {
   # This cannot use the prompt constants, as they may be empty
   local -A prefix_constant_map
   prefix_constant_map=(
-    '\?\? '     'UNTRACKED'
-    'A  '       'ADDED'
-    'M  '       'MODIFIED'
-    'MM '       'MODIFIED'
-    ' M '       'MODIFIED'
-    'AM '       'MODIFIED'
-    ' T '       'MODIFIED'
-    'R  '       'RENAMED'
-    ' D '       'DELETED'
-    'D  '       'DELETED'
-    'UU '       'UNMERGED'
-    'ahead'     'AHEAD'
-    'behind'    'BEHIND'
-    'diverged'  'DIVERGED'
+    '\? '       'UNTRACKED'
+    '1 A\. '    'ADDED'
+    '1 M\. '    'MODIFIED'
+    '1 MM '     'MODIFIED'
+    '1 \.M '    'MODIFIED'
+    '1 AM '     'MODIFIED'
+    '1 \.T '    'MODIFIED'
+    '2 .. '     'RENAMED'
+    '1 \.D '    'DELETED'
+    '1 D\. '    'DELETED'
+    'u .. '     'UNMERGED'
+    '# branch\.ab \+([1-9][0-9]*) -(0)'           'AHEAD'
+    '# branch\.ab \+(0) -([1-9][0-9]*)'           'BEHIND'
+    '# branch\.ab \+([1-9][0-9]*) -([1-9][0-9]*)' 'DIVERGED'
     'stashed'   'STASHED'
   )
 
@@ -95,7 +95,7 @@ function _omz_git_prompt_status() {
   )
 
   local status_text
-  status_text="$(__git_prompt_git status --porcelain -b 2> /dev/null)"
+  status_text="$(__git_prompt_git status --porcelain=v2 -b 2> /dev/null)"
 
   # Don't continue on a catastrophic failure
   if [[ $? -eq 128 ]]; then
@@ -111,19 +111,6 @@ function _omz_git_prompt_status() {
 
   local status_lines
   status_lines=("${(@f)${status_text}}")
-
-  # If the tracking line exists, get and parse it
-  if [[ "$status_lines[1]" =~ "^## [^ ]+ \[(.*)\]" ]]; then
-    local branch_statuses
-    branch_statuses=("${(@s/,/)match}")
-    for branch_status in $branch_statuses; do
-      if [[ ! $branch_status =~ "(behind|diverged|ahead) ([0-9]+)?" ]]; then
-        continue
-      fi
-      local last_parsed_status=$prefix_constant_map[$match[1]]
-      statuses_seen[$last_parsed_status]=$match[2]
-    done
-  fi
 
   # For each status prefix, do a regex comparison
   for status_prefix in "${(@k)prefix_constant_map}"; do
