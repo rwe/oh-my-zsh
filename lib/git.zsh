@@ -56,12 +56,12 @@ function _omz_git_prompt_status() {
   local -A prefix_constant_map
   prefix_constant_map=(
     '\? '               'UNTRACKED'
-    '1 A\. '            'ADDED'
-    '1 M\. '            'MODIFIED'
-    '1 MM '             'MODIFIED'
-    '1 \.M '            'MODIFIED'
-    '1 AM '             'MODIFIED'
-    '1 \.T '            'MODIFIED'
+    '1 A\. N\.\.\. '    'ADDED'
+    '1 M\. N\.\.\. '    'MODIFIED'
+    '1 MM N\.\.\. '     'MODIFIED'
+    '1 \.M N\.\.\. '    'MODIFIED'
+    '1 AM N\.\.\. '     'MODIFIED'
+    '1 \.T N\.\.\. '    'MODIFIED'
     '2 .. '             'RENAMED'
     '1 \.D '            'DELETED'
     '1 D\. '            'DELETED'
@@ -70,6 +70,9 @@ function _omz_git_prompt_status() {
     '# branch\.ab \+(0) -([1-9][0-9]*)'           'BEHIND'
     '# branch\.ab \+([1-9][0-9]*) -([1-9][0-9]*)' 'DIVERGED'
     'stashed'   'STASHED'
+    '1 .. SC..' 'SUBMODULE_HAS_COMMIT'
+    '1 .. S..U' 'SUBMODULE_HAS_UNTRACKED'
+    '1 .. S.M.' 'SUBMODULE_HAS_MODIFIED'
   )
 
   # Maps the internal constant to the prompt theme
@@ -85,12 +88,18 @@ function _omz_git_prompt_status() {
     'BEHIND'    "$ZSH_THEME_GIT_PROMPT_BEHIND"
     'DIVERGED'  "$ZSH_THEME_GIT_PROMPT_DIVERGED"
     'STASHED'   "$ZSH_THEME_GIT_PROMPT_STASHED"
+    'SUBMODULE_HAS_COMMIT' "$ZSH_THEME_GIT_PROMPT_SUBMODULE_HAS_COMMIT"
+    'SUBMODULE_HAS_UNTRACKED' "$ZSH_THEME_GIT_PROMPT_SUBMODULE_HAS_UNTRACKED"
+    'SUBMODULE_HAS_MODIFIED' "$ZSH_THEME_GIT_PROMPT_SUBMODULE_HAS_MODIFIED"
   )
 
   # The order that the prompt displays should be added to the prompt
   local status_constants
   status_constants=(
     UNTRACKED ADDED MODIFIED RENAMED DELETED
+    SUBMODULE_HAS_COMMIT
+    SUBMODULE_HAS_UNTRACKED
+    SUBMODULE_HAS_MODIFIED
     STASHED UNMERGED AHEAD BEHIND DIVERGED
   )
 
