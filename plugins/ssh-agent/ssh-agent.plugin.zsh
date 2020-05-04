@@ -2,6 +2,8 @@
 ssh_env_cache="$HOME/.ssh/environment-$SHORT_HOST"
 
 function _start_agent() {
+	emulate -L zsh
+
   # Check if ssh-agent is already running
   if [[ -f "$ssh_env_cache" ]]; then
     . "$ssh_env_cache" > /dev/null
@@ -25,6 +27,8 @@ function _start_agent() {
 }
 
 function _add_identities() {
+	emulate -L zsh
+
   local id file line sig lines
   local -a identities loaded_sigs loaded_ids not_loaded
   zstyle -a :omz:plugins:ssh-agent identities identities
