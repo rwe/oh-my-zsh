@@ -32,8 +32,8 @@ function _omz_git_prompt_info() {
   # Use global ZSH_THEME_GIT_SHOW_UPSTREAM=1 for including upstream remote info
   local upstream
   if (( ${+ZSH_THEME_GIT_SHOW_UPSTREAM} )); then
-    upstream=$(__git_prompt_git rev-parse --abbrev-ref --symbolic-full-name "@{upstream}" 2>/dev/null) \
-    && upstream=" -> ${upstream}"
+    upstream=" -> $(__git_prompt_git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null)" \
+    || upstream=''
   fi
 
   echo "${ZSH_THEME_GIT_PROMPT_PREFIX}${ref//\%/%%}${upstream//\%/%%}$(parse_git_dirty)${ZSH_THEME_GIT_PROMPT_SUFFIX}"
@@ -217,7 +217,7 @@ function parse_git_dirty() {
   FLAGS=('--porcelain')
   if [[ "$(__git_prompt_git config --get oh-my-zsh.hide-dirty)" != "1" ]]; then
     if [[ "${DISABLE_UNTRACKED_FILES_DIRTY:-}" == "true" ]]; then
-      FLAGS+='--untracked-files=no'
+      FLAGS+=('--untracked-files=no')
     fi
     case "${GIT_STATUS_IGNORE_SUBMODULES:-}" in
       git)
@@ -226,10 +226,10 @@ function parse_git_dirty() {
       *)
         # if unset: ignore dirty submodules
         # other values are passed to --ignore-submodules
-        FLAGS+="--ignore-submodules=${GIT_STATUS_IGNORE_SUBMODULES:-dirty}"
+        FLAGS+=("--ignore-submodules=${GIT_STATUS_IGNORE_SUBMODULES:-dirty}")
         ;;
     esac
-    STATUS=$(__git_prompt_git status ${FLAGS} 2> /dev/null | tail -n 1)
+    STATUS=$(__git_prompt_git status "${FLAGS[@]}" 2> /dev/null | tail -n 1)
   fi
   if [[ -n $STATUS ]]; then
     echo "$ZSH_THEME_GIT_PROMPT_DIRTY"
@@ -243,8 +243,8 @@ function git_remote_status() {
     local remote ahead behind git_remote_status git_remote_status_detailed
     remote=${$(__git_prompt_git rev-parse --verify ${hook_com[branch]}@{upstream} --symbolic-full-name 2>/dev/null)/refs\/remotes\/}
     if [[ -n ${remote} ]]; then
-        ahead=$(__git_prompt_git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
-        behind=$(__git_prompt_git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l)
+        ahead=$(__git_prompt_git rev-list "${hook_com[branch]}@{upstream}..HEAD" 2>/dev/null | wc -l)
+        behind=$(__git_prompt_git rev-list "HEAD..${hook_com[branch]}@{upstream}" 2>/dev/null | wc -l)
 
         if [[ $ahead -eq 0 ]] && [[ $behind -eq 0 ]]; then
             git_remote_status="$ZSH_THEME_GIT_PROMPT_EQUAL_REMOTE"
@@ -298,7 +298,7 @@ function git_previous_branch() {
 # Gets the number of commits ahead from remote
 function git_commits_ahead() {
   if __git_prompt_git rev-parse --git-dir &>/dev/null; then
-    local commits="$(__git_prompt_git rev-list --count @{upstream}..HEAD 2>/dev/null)"
+    local commits="$(__git_prompt_git rev-list --count '@{upstream}..HEAD' 2>/dev/null)"
     if [[ -n "$commits" && "$commits" != 0 ]]; then
       echo "$ZSH_THEME_GIT_COMMITS_AHEAD_PREFIX$commits$ZSH_THEME_GIT_COMMITS_AHEAD_SUFFIX"
     fi
@@ -308,7 +308,7 @@ function git_commits_ahead() {
 # Gets the number of commits behind remote
 function git_commits_behind() {
   if __git_prompt_git rev-parse --git-dir &>/dev/null; then
-    local commits="$(__git_prompt_git rev-list --count HEAD..@{upstream} 2>/dev/null)"
+    local commits="$(__git_prompt_git rev-list --count 'HEAD..@{upstream}' 2>/dev/null)"
     if [[ -n "$commits" && "$commits" != 0 ]]; then
       echo "$ZSH_THEME_GIT_COMMITS_BEHIND_PREFIX$commits$ZSH_THEME_GIT_COMMITS_BEHIND_SUFFIX"
     fi
@@ -317,21 +317,21 @@ function git_commits_behind() {
 
 # Outputs if current branch is ahead of remote
 function git_prompt_ahead() {
-  if [[ -n "$(__git_prompt_git rev-list origin/$(git_current_branch)..HEAD 2> /dev/null)" ]]; then
+  if [[ -n "$(__git_prompt_git rev-list "origin/$(git_current_branch)..HEAD" 2> /dev/null)" ]]; then
     echo "$ZSH_THEME_GIT_PROMPT_AHEAD"
   fi
 }
 
 # Outputs if current branch is behind remote
 function git_prompt_behind() {
-  if [[ -n "$(__git_prompt_git rev-list HEAD..origin/$(git_current_branch) 2> /dev/null)" ]]; then
+  if [[ -n "$(__git_prompt_git rev-list "HEAD..origin/$(git_current_branch)" 2> /dev/null)" ]]; then
     echo "$ZSH_THEME_GIT_PROMPT_BEHIND"
   fi
 }
 
 # Outputs if current branch exists on remote or not
 function git_prompt_remote() {
-  if [[ -n "$(__git_prompt_git show-ref origin/$(git_current_branch) 2> /dev/null)" ]]; then
+  if [[ -n "$(__git_prompt_git show-ref "origin/$(git_current_branch)" 2> /dev/null)" ]]; then
     echo "$ZSH_THEME_GIT_PROMPT_REMOTE_EXISTS"
   else
     echo "$ZSH_THEME_GIT_PROMPT_REMOTE_MISSING"
@@ -367,6 +367,6 @@ function git_current_user_email() {
 function git_repo_name() {
   local repo_path
   if repo_path="$(__git_prompt_git rev-parse --show-toplevel 2>/dev/null)" && [[ -n "$repo_path" ]]; then
-    echo ${repo_path:t}
+    echo "${repo_path:t}"
   fi
 }
