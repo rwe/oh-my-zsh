@@ -39,7 +39,9 @@ function _omz_git_prompt_info() {
   echo "${ZSH_THEME_GIT_PROMPT_PREFIX}${ref//\%/%%}${upstream//\%/%%}$(parse_git_dirty)${ZSH_THEME_GIT_PROMPT_SUFFIX}"
 }
 
+# Get the status of the working tree
 function _omz_git_prompt_status() {
+  emulate -L zsh
   # OHMYZSH-13330: avoid "regex matching error: illegal byte sequence".
   # zsh's "=~" operator delegates to the C library regex, which aborts with
   # REG_ILLSEQ when the subject contains an invalid byte sequence under a
@@ -102,11 +104,11 @@ function _omz_git_prompt_status() {
     STASHED UNMERGED AHEAD BEHIND DIVERGED
   )
 
-  local status_text
-  status_text="$(__git_prompt_git status --porcelain=v2 -b 2> /dev/null)"
+  local status_text status_code=0
+  status_text="$(__git_prompt_git status --porcelain=v2 -b 2> /dev/null)" || status_code=$?
 
   # Don't continue on a catastrophic failure
-  if [[ $? -eq 128 ]]; then
+  if [[ ${status_code} -eq 128 ]]; then
     return 1
   fi
 
