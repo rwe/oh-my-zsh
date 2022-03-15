@@ -118,6 +118,64 @@ bindkey '^s' history-incremental-search-forward
 bindkey '^a' beginning-of-line
 bindkey '^e' end-of-line
 
+# zsh 5.08 through least 5.8 ship with functions for operating on
+# quoted/bracketed text objects.
+() {
+  # Selecting/applying to surrounding brackets/parens.
+  emulate -L zsh
+  autoload +X -Uz select-bracketed 2>/dev/null || return
+  zle -N select-bracketed
+
+  local m c
+  for m in visual viopp; do
+    for c in {a,i}${(s..)^:-'()[]{}<>bB'}; do
+      bindkey -M $m $c select-bracketed
+    done
+  done
+}
+
+() {
+  # Selecting/applying to surrounding quotes
+  emulate -L zsh
+  autoload +X -Uz select-quoted 2>/dev/null || return
+  zle -N select-quoted
+
+  local m c
+  for m in visual viopp; do
+    for c in {a,i}{\',\",\`}; do
+      bindkey -M $m $c select-quoted
+    done
+  done
+}
+
+() {
+  # Adding/changing/deleting surrounding brackets/quotes.
+  # NOTE: zsh-syntax-highlighting and zsh-autosuggestions
+  # seem to give these bindings some trouble.
+  emulate -L zsh
+  autoload +X -Uz surround 2>/dev/null || return
+
+  zle -N add-surround surround
+  bindkey -a ys add-surround
+  bindkey -M visual S add-surround
+
+  zle -N change-surround surround
+  bindkey -a cs change-surround
+
+  zle -N delete-surround surround
+  bindkey -a ds delete-surround
+}
+
+() {
+  # Bind '!' to update the active region by piping through another command.
+  emulate -L zsh
+  autoload +X -Uz vi-pipe 2>/dev/null || return
+
+  zle -N vi-pipe
+  bindkey -a '!' vi-pipe
+  bindkey -M visual '!' vi-pipe
+}
+
 function wrap_clipboard_widgets() {
   # NB: Assume we are the first wrapper and that we only wrap native widgets
   # See zsh-autosuggestions.zsh for a more generic and more robust wrapper
