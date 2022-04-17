@@ -162,13 +162,14 @@ if [[ -z "${VI_MODE_DISABLE_CLIPBOARD:-}" ]]; then
 fi
 
 # if mode indicator wasn't setup by theme, define default, we'll leave INSERT_MODE_INDICATOR empty by default
-typeset -g MODE_INDICATOR=${MODE_INDICATOR:='%B%F{red}<%b<<%f'}
+typeset -g MODE_INDICATOR=${MODE_INDICATOR:-'%B%F{red}<%b<<%f'}
+typeset -g INSERT_MODE_INDICATOR=${INSERT_MODE_INDICATOR:-}
 
 function vi_mode_prompt_info() {
   echo "${${VI_KEYMAP/vicmd/$MODE_INDICATOR}/(main|viins)/$INSERT_MODE_INDICATOR}"
 }
 
 # define right prompt, if it wasn't defined by a theme
-if [[ -z "$RPS1" && -z "$RPROMPT" ]]; then
+if [[ -z "${RPS1:-}" && -z "${RPROMPT:-}" ]]; then
   RPS1='$(vi_mode_prompt_info)'
 fi
