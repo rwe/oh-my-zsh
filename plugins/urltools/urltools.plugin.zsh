@@ -4,29 +4,29 @@
 # Taken from:
 # https://ruslanspivak.com/2010/06/02/urlencode-and-urldecode-from-a-command-line/
 
-if [[ $(whence $URLTOOLS_METHOD) = "" ]]; then
-    URLTOOLS_METHOD=""
+if [[ -n "${URLTOOLS_METHOD:-}" ]] && [[ "$(whence "$URLTOOLS_METHOD")" = '' ]]; then
+    URLTOOLS_METHOD=
 fi
 
-if [[ $(whence node) != "" && ( "x$URLTOOLS_METHOD" = "x"  || "x$URLTOOLS_METHOD" = "xnode" ) ]]; then
+if [[ "${URLTOOLS_METHOD:-node}" == node ]] && (( ${+commands[node]} )); then
     alias urlencode='node -e "console.log(encodeURIComponent(process.argv[1]))"'
     alias urldecode='node -e "console.log(decodeURIComponent(process.argv[1]))"'
-elif [[ $(whence python3) != "" && ( "x$URLTOOLS_METHOD" = "x" || "x$URLTOOLS_METHOD" = "xpython" ) ]]; then
+elif [[ "${URLTOOLS_METHOD:-python3}" == python(|3) ]] && (( ${+commands[python3]} )); then
     alias urlencode='python3 -c "import sys; del sys.path[0]; import urllib.parse as up; print(up.quote_plus(sys.argv[1]))"'
     alias urldecode='python3 -c "import sys; del sys.path[0]; import urllib.parse as up; print(up.unquote_plus(sys.argv[1]))"'
-elif [[ $(whence python2) != "" && ( "x$URLTOOLS_METHOD" = "x" || "x$URLTOOLS_METHOD" = "xpython" ) ]]; then
+elif [[ "${URLTOOLS_METHOD:-python2}" == python(|2) ]] && (( ${+commands[python2]} )); then
     alias urlencode='python2 -c "import sys; del sys.path[0]; import urllib as ul; print ul.quote_plus(sys.argv[1])"'
     alias urldecode='python2 -c "import sys; del sys.path[0]; import urllib as ul; print ul.unquote_plus(sys.argv[1])"'
-elif [[ $(whence xxd) != "" && ( "x$URLTOOLS_METHOD" = "x" || "x$URLTOOLS_METHOD" = "xshell" ) ]]; then
+elif [[ "${URLTOOLS_METHOD:-shell}" == shell ]] && (( ${+commands[xxd]} )); then
     function urlencode() {echo $@ | tr -d "\n" | xxd -plain | sed "s/\(..\)/%\1/g"}
     function urldecode() {printf $(echo -n $@ | sed 's/\\/\\\\/g;s/\(%\)\([0-9a-fA-F][0-9a-fA-F]\)/\\x\2/g')"\n"}
-elif [[ $(whence ruby) != "" && ( "x$URLTOOLS_METHOD" = "x" || "x$URLTOOLS_METHOD" = "xruby" ) ]]; then
+elif [[ "${URLTOOLS_METHOD:-ruby}" == ruby ]] && (( ${+commands[ruby]} )); then
     alias urlencode='ruby -r cgi -e "puts CGI.escape(ARGV[0])"'
     alias urldecode='ruby -r cgi -e "puts CGI.unescape(ARGV[0])"'
-elif [[ $(whence php) != "" && ( "x$URLTOOLS_METHOD" = "x" || "x$URLTOOLS_METHOD" = "xphp" ) ]]; then
+elif [[ "${URLTOOLS_METHOD:-php}" == php ]] && (( ${+commands[php]} )); then
     alias urlencode='php -r "echo rawurlencode(\$argv[1]); echo \"\n\";"'
     alias urldecode='php -r "echo rawurldecode(\$argv[1]); echo \"\\n\";"'
-elif [[ $(whence perl) != "" && ( "x$URLTOOLS_METHOD" = "x" || "x$URLTOOLS_METHOD" = "xperl" ) ]]; then
+elif [[ "${URLTOOLS_METHOD:-perl}" == perl ]] && (( ${+commands[perl]} )); then
     if perl -MURI::Encode -e 1&> /dev/null; then
         alias urlencode='perl -MURI::Encode -ep "uri_encode($ARGV[0]);"'
         alias urldecode='perl -MURI::Encode -ep "uri_decode($ARGV[0]);"'
