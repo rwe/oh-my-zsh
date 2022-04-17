@@ -11,10 +11,10 @@ fi
 if [[ "${URLTOOLS_METHOD:-node}" == node ]] && (( ${+commands[node]} )); then
     alias urlencode='node -e "console.log(encodeURIComponent(process.argv[1]))"'
     alias urldecode='node -e "console.log(decodeURIComponent(process.argv[1]))"'
-elif [[ "${URLTOOLS_METHOD:-python}" == python ]] && (( ${+commands[python3]} )); then
+elif [[ "${URLTOOLS_METHOD:-python3}" == python(|3) ]] && (( ${+commands[python3]} )); then
     alias urlencode='python3 -c "import sys; del sys.path[0]; import urllib.parse as up; print(up.quote_plus(sys.argv[1]))"'
     alias urldecode='python3 -c "import sys; del sys.path[0]; import urllib.parse as up; print(up.unquote_plus(sys.argv[1]))"'
-elif [[ "${URLTOOLS_METHOD:-python}" == python ]] && (( ${+commands[python2]} )); then
+elif [[ "${URLTOOLS_METHOD:-python2}" == python(|2) ]] && (( ${+commands[python2]} )); then
     alias urlencode='python2 -c "import sys; del sys.path[0]; import urllib as ul; print ul.quote_plus(sys.argv[1])"'
     alias urldecode='python2 -c "import sys; del sys.path[0]; import urllib as ul; print ul.unquote_plus(sys.argv[1])"'
 elif [[ "${URLTOOLS_METHOD:-shell}" == shell ]] && (( ${+commands[xxd]} )); then
