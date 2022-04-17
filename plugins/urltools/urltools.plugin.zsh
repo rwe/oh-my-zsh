@@ -4,10 +4,6 @@
 # Taken from:
 # https://ruslanspivak.com/2010/06/02/urlencode-and-urldecode-from-a-command-line/
 
-if [[ -n "${URLTOOLS_METHOD:-}" ]] && [[ "$(whence "$URLTOOLS_METHOD")" = '' ]]; then
-    URLTOOLS_METHOD=
-fi
-
 if [[ "${URLTOOLS_METHOD:-node}" == node ]] && (( ${+commands[node]} )); then
     function urlencode() { node -e 'console.log(encodeURIComponent(process.argv[1]))' "$1"; }
     function urldecode() { node -e 'console.log(decodeURIComponent(process.argv[1]))' "$1"; }
@@ -37,6 +33,9 @@ elif [[ "${URLTOOLS_METHOD:-perl}" == perl ]] && (( ${+commands[perl]} )); then
         function urlencode() { perl -e '$new=$ARGV[0]; $new =~ s/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg; print "$new\n";' "$1"; }
         function urldecode() { perl -e '$new=$ARGV[0]; $new =~ s/\%([A-Fa-f0-9]{2})/pack("C", hex($1))/seg; print "$new\n";' "$1"; }
     fi
+else
+    function urlencode() { omz_urlencode -rmp "$1"; }
+    function urldecode() { omz_urldecode "$1"; }
 fi
 
 unset URLTOOLS_METHOD
