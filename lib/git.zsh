@@ -94,8 +94,7 @@ function _omz_git_prompt_status() {
   )
 
   # The order that the prompt displays should be added to the prompt
-  local status_constants
-  status_constants=(
+  local -a status_constants=(
     UNTRACKED ADDED MODIFIED RENAMED DELETED
     SUBMODULE_HAS_COMMIT
     SUBMODULE_HAS_UNTRACKED
@@ -112,7 +111,7 @@ function _omz_git_prompt_status() {
   fi
 
   # A lookup table of each git status encountered
-  local -A statuses_seen
+  local -A statuses_seen=()
 
   if __git_prompt_git rev-parse --verify refs/stash &>/dev/null; then
     statuses_seen[STASHED]=1
@@ -122,9 +121,10 @@ function _omz_git_prompt_status() {
   status_lines=("${(@f)${status_text}}")
 
   # For each status prefix, do a regex comparison
+  local status_prefix status_constant status_regex
   for status_prefix in "${(@k)prefix_constant_map}"; do
-    local status_constant="${prefix_constant_map[$status_prefix]}"
-    local status_regex=$'(^|\n)'"$status_prefix"
+    status_constant="${prefix_constant_map[$status_prefix]}"
+    status_regex=$'(^|\n)'"$status_prefix"
 
     if [[ "$status_text" =~ $status_regex ]]; then
       statuses_seen[$status_constant]=1
@@ -132,7 +132,8 @@ function _omz_git_prompt_status() {
   done
 
   # Display the seen statuses in the order specified
-  local status_prompt
+  local status_prompt=''
+
   for status_constant in $status_constants; do
     if (( ${+statuses_seen[$status_constant]} )); then
       local next_display=$constant_prompt_map[$status_constant]
