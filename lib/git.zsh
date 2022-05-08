@@ -134,14 +134,13 @@ function _omz_git_prompt_status() {
   # Display the seen statuses in the order specified
   local status_prompt=''
 
-  for status_constant in $status_constants; do
+  # @Oa ⇒ reversed order
+  for status_constant in "${(Oa)status_constants[@]}"; do
     if (( ${+statuses_seen[$status_constant]} )); then
-      local next_display=$constant_prompt_map[$status_constant]
-      status_prompt="$next_display$status_prompt"
+      status_prompt+="${constant_prompt_map[$status_constant]}"
     fi
   done
-
-  echo $status_prompt
+  print -n "${status_prompt}"
 }
 
 # Use async version if setting is enabled, or unset but zsh version is at least 5.0.6.
