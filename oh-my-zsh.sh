@@ -111,7 +111,7 @@ if [[ -z "${ZSH_COMPDUMP:-}" ]]; then
 fi
 
 # Construct zcompdump OMZ metadata
-zcompdump_revision="#omz revision: $(builtin cd -q "$ZSH"; GIT_OPTIONAL_LOCKS=0 git rev-parse HEAD 2>/dev/null)"
+zcompdump_revision="#omz revision: $(GIT_OPTIONAL_LOCKS=0 git -C "$ZSH" rev-parse HEAD 2>/dev/null)"
 zcompdump_fpath="#omz fpath: $fpath"
 
 # Delete the zcompdump file if OMZ zcompdump metadata changed
