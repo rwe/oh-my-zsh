@@ -176,6 +176,15 @@ bindkey '^e' end-of-line
   bindkey -M visual '!' vi-pipe
 }
 
+() {
+  # Bind ^K to `insert-composd-char`, which corresponds to vim's digraphs.
+  emulate -L zsh
+  autoload +X -Uz insert-composed-char 2>/dev/null || return
+
+  zle -N insert-composed-char
+  bindkey -M viins '^K' insert-composed-char
+}
+
 function wrap_clipboard_widgets() {
   # NB: Assume we are the first wrapper and that we only wrap native widgets
   # See zsh-autosuggestions.zsh for a more generic and more robust wrapper
