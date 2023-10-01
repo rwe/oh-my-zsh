@@ -1,5 +1,5 @@
 # Get the filename to store/lookup the environment from
-ssh_env_cache="$HOME/.ssh/environment-$SHORT_HOST"
+typeset -g ssh_env_cache="$HOME/.ssh/environment-$SHORT_HOST"
 
 function _start_agent() {
 	emulate -L zsh
