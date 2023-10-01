@@ -75,81 +75,80 @@
 #   setup: Prepare to use the clipboard.
 #   teardown: Clean up anything related to the use of the clipboard.
 #
-typeset -ag __omz_all_clipboards
-__omz_all_clipboards=()
+typeset -ag __omz_all_clipboards=()
 
 ## clipboard: macos {{
-__omz_all_clipboards+=(macos)
+typeset -ag __omz_all_clipboards=("${__omz_all_clipboards[@]}" macos)
 function __omz_clipboard_macos_available() { [[ "${OSTYPE}" == darwin* ]] && (( ${+commands[pbcopy]} )) && (( ${+commands[pbpaste]} )); }
 function __omz_clipboard_macos_clipcopy() { cat "${1:-/dev/stdin}" | pbcopy; }
 function __omz_clipboard_macos_clippaste() { pbpaste; }
 # }}
 
 ## clipboard: cygwin {{
-__omz_all_clipboards+=(cygwin)
+typeset -ag __omz_all_clipboards=("${__omz_all_clipboards[@]}" cygwin)
 function __omz_clipboard_cygwin_available() { [[ "${OSTYPE}" == (cygwin|msys)* ]]; }
 function __omz_clipboard_cygwin_clipcopy() { cat "${1:-/dev/stdin}" > /dev/clipboard; }
 function __omz_clipboard_cygwin_clippaste() { cat /dev/clipboard; }
 # }}
 
 ## clipboard: wayland {{
-__omz_all_clipboards+=(wayland)
+typeset -ag __omz_all_clipboards=("${__omz_all_clipboards[@]}" wayland)
 function __omz_clipboard_wayland_available() { [ -n "${WAYLAND_DISPLAY:-}" ] && (( ${+commands[wl-copy]} )) && (( ${+commands[wl-paste]} )); }
 function __omz_clipboard_wayland_clipcopy() { cat "${1:-/dev/stdin}" | wl-copy &>/dev/null &|; }
 function __omz_clipboard_wayland_clippaste() { wl-paste --no-newline; }
 # }}
 
 ## clipboard: xclip {{
-__omz_all_clipboards+=(xclip)
+typeset -ag __omz_all_clipboards=("${__omz_all_clipboards[@]}" xclip)
 function __omz_clipboard_xclip_available() { [ -n "${DISPLAY:-}" ] && (( ${+commands[xclip]} )); }
 function __omz_clipboard_xclip_clipcopy() { cat "${1:-/dev/stdin}" | xclip -selection clipboard -in &>/dev/null &|; }
 function __omz_clipboard_xclip_clippaste() { xclip -out -selection clipboard; }
 # }}
 
 ## clipboard: xsel {{
-__omz_all_clipboards+=(xsel)
+typeset -ag __omz_all_clipboards=("${__omz_all_clipboards[@]}" xsel)
 function __omz_clipboard_xsel_available() { [ -n "${DISPLAY:-}" ] && (( ${+commands[xsel]} )); }
 function __omz_clipboard_xsel_clipcopy() { cat "${1:-/dev/stdin}" | xsel --clipboard --input; }
 function __omz_clipboard_xsel_clippaste() { xsel --clipboard --output; }
 # }}
 
 ## clipboard: lemonade {{
-__omz_all_clipboards+=(lemonade)
+typeset -ag __omz_all_clipboards=("${__omz_all_clipboards[@]}" lemonade)
 function __omz_clipboard_lemonade_available() { (( ${+commands[lemonade]} )); }
 function __omz_clipboard_lemonade_clipcopy() { cat "${1:-/dev/stdin}" | lemonade copy; }
 function __omz_clipboard_lemonade_clippaste() { lemonade paste; }
 # }}
 
 ## clipboard: doitclient {{
-__omz_all_clipboards+=(doitclient)
+typeset -ag __omz_all_clipboards=("${__omz_all_clipboards[@]}" doitclient)
 function __omz_clipboard_doitclient_available() { (( ${+commands[doitclient]} )); }
 function __omz_clipboard_doitclient_clipcopy() { cat "${1:-/dev/stdin}" | doitclient wclip; }
 function __omz_clipboard_doitclient_clippaste() { doitclient wclip -r; }
 # }}
 
 ## clipboard: win32yank {{
-__omz_all_clipboards+=(win32yank)
+typeset -ag __omz_all_clipboards=("${__omz_all_clipboards[@]}" win32yank)
 function __omz_clipboard_win32yank_available() { (( ${+commands[win32yank]} )); }
 function __omz_clipboard_win32yank_clipcopy() { cat "${1:-/dev/stdin}" | win32yank -i; }
 function __omz_clipboard_win32yank_clippaste() { win32yank -o; }
 # }}
 
 ## clipboard: termux {{
-__omz_all_clipboards+=(termux)
+typeset -ag __omz_all_clipboards=("${__omz_all_clipboards[@]}" termux)
 function __omz_clipboard_termux_available() { [[ $OSTYPE == linux-android* ]] && (( ${+commands[termux-clipboard-set]} )); }
 function __omz_clipboard_termux_clipcopy() { cat "${1:-/dev/stdin}" | termux-clipboard-set; }
 function __omz_clipboard_termux_clippaste() { termux-clipboard-get; }
 # }}
 
 ## clipboard: tmux {{
-__omz_all_clipboards+=(tmux)
+typeset -ag __omz_all_clipboards=("${__omz_all_clipboards[@]}" tmux)
 function __omz_clipboard_tmux_available() { [ -n "${TMUX:-}" ] && (( ${+commands[tmux]} )); }
 function __omz_clipboard_tmux_clipcopy() { tmux load-buffer -w "${1:--}"; }
 function __omz_clipboard_tmux_clippaste() { tmux save-buffer -; }
 # }}
 
 ## clipboard: powershell {{
-__omz_all_clipboards+=(powershell)
+typeset -ag __omz_all_clipboards=("${__omz_all_clipboards[@]}" powershell)
 function __omz_clipboard_powershell_available() { (( $+commands[clip.exe] )) && (( $+commands[powershell.exe] )); }
 function __omz_clipboard_powershell_clipcopy() { cat "${1:-/dev/stdin}" | clip.exe; }
 function __omz_clipboard_powershell_clippaste() { powershell.exe -noprofile -command Get-Clipboard; }
@@ -160,7 +159,7 @@ function __omz_clipboard_powershell_clippaste() { powershell.exe -noprofile -com
 #
 # User may set `ZSH_CLIPBOARD_FILENAME` to a filename. Otherwise, a tempfile is
 # created which gets cleaned up when the shell exits.
-__omz_all_clipboards+=(file)
+typeset -ag __omz_all_clipboards=("${__omz_all_clipboards[@]}" file)
 function __omz_clipboard_file_available() { return 0; }
 function __omz_clipboard_file_clipcopy() { cat "${1:-/dev/stdin}" > "${ZSH_CLIPBOARD_FILENAME}"; }
 function __omz_clipboard_file_clippaste() { cat "${ZSH_CLIPBOARD_FILENAME}"; }
@@ -191,7 +190,7 @@ function __omz_clipboard_file_setup() {
 
 ## clipboard: var {{
 # Copy/paste into an environment variable. Fine for local copies/pastes in vi-mode.
-__omz_all_clipboards+=(var)
+typeset -ag __omz_all_clipboards=("${__omz_all_clipboards[@]}" var)
 function __omz_clipboard_var_available() { return 0; }
 function __omz_clipboard_var_clipcopy() { typeset -gx ZSH_CLIPBOARD_CONTENTS="$(< "${1:-/dev/stdin}")"; }
 function __omz_clipboard_var_clippaste() { printf %s "${ZSH_CLIPBOARD_CONTENTS:-}"; }
@@ -201,7 +200,7 @@ function __omz_clipboard_var_teardown() { unset ZSH_CLIPBOARD_CONTENTS; }
 
 ## clipboard: null {{
 # Copy into /dev/null, and always paste nothing. Safe, available everywhere, pretty useless.
-__omz_all_clipboards+=(null)
+typeset -ag __omz_all_clipboards=("${__omz_all_clipboards[@]}" null)
 function __omz_clipboard_null_available() { return 0; }
 function __omz_clipboard_null_clipcopy() { cat "${1:-/dev/stdin}" > /dev/null; }
 function __omz_clipboard_null_clippaste() { print ''; }
@@ -217,8 +216,7 @@ typeset -gx ZSH_CLIPBOARD
 
 # If we're a sub-shell inheriting a clipboard, don't attempt to do things like
 # clean up the temp files.
-__omz_parent_shell_clipboard="${ZSH_CLIPBOARD:-}"
-typeset -rg __omz_parent_shell_clipboard
+typeset -rg __omz_parent_shell_clipboard="${ZSH_CLIPBOARD:-}"
 
 # Set the current clipboard driver, handling any setup or teardown.
 function clipboard-set() {
@@ -262,8 +260,7 @@ function clipboard-set() {
 # defined above.
 #
 if ! (( ${+ZSH_CLIPBOARDS} )); then
-  typeset -ag ZSH_CLIPBOARDS
-  ZSH_CLIPBOARDS=("${__omz_all_clipboards[@]}")
+  typeset -ag ZSH_CLIPBOARDS=("${__omz_all_clipboards[@]}")
 fi
 
 # Attempt to detect and set up the "best" clipboard to use.
