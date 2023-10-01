@@ -339,9 +339,12 @@ _git-undo(){
         '(--hard -h)'{--hard,-h}'[wipes your commit(s)]'
 }
 
+() {
+# Avoid triggering WARN_CREATE_GLOBAL.
+local -a existing_user_commands
 zstyle -g existing_user_commands ':completion:*:*:git:*' user-commands
 
-zstyle ':completion:*:*:git:*' user-commands $existing_user_commands \
+zstyle ':completion:*:*:git:*' user-commands "${existing_user_commands[@]}" \
     alias:'define, search and show aliases' \
     abort:'abort current revert, merge, rebase, or cherry-pick process' \
     archive-file:'export the current head of the git repository to an archive' \
@@ -415,4 +418,6 @@ zstyle ':completion:*:*:git:*' user-commands $existing_user_commands \
     touch:'touch and add file to the index' \
     undo:'remove latest commits' \
     unlock:'unlock a file excluded from version control' \
-    utimes:'change files modification time to their last commit date'
+    utimes:'change files modification time to their last commit date' \
+    ;
+}
