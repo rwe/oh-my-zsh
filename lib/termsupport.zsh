@@ -38,11 +38,11 @@ function title {
   esac
 }
 
-ZSH_THEME_TERM_TAB_TITLE_IDLE="%15<..<%~%<<" #15 char left truncated PWD
-ZSH_THEME_TERM_TITLE_IDLE="%n@%m:%~"
+typeset -g ZSH_THEME_TERM_TAB_TITLE_IDLE="%15<..<%~%<<" #15 char left truncated PWD
+typeset -g ZSH_THEME_TERM_TITLE_IDLE="%n@%m:%~"
 # Avoid duplication of directory in terminals with independent dir display
 if [[ "${TERM_PROGRAM:-}" == Apple_Terminal ]]; then
-  ZSH_THEME_TERM_TITLE_IDLE="%n@%m"
+  typeset -g ZSH_THEME_TERM_TITLE_IDLE="%n@%m"
 fi
 
 # Runs before showing the prompt
