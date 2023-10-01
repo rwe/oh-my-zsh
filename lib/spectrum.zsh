@@ -2,9 +2,9 @@
 # P.C. Shyamshankar <sykora@lucentbeing.com>
 # Copied from https://github.com/sykora/etc/blob/master/zsh/functions/spectrum/
 
-typeset -AHg FX FG BG
+typeset -AHg FG BG
 
-FX=(
+typeset -AHg FX=(
   reset     "%{[00m%}"
   bold      "%{[01m%}" no-bold      "%{[22m%}"
   dim       "%{[02m%}" no-dim       "%{[22m%}"
@@ -14,15 +14,19 @@ FX=(
   reverse   "%{[07m%}" no-reverse   "%{[27m%}"
 )
 
-for color in {000..255}; do
-  FG[$color]="%{[38;5;${color}m%}"
-  BG[$color]="%{[48;5;${color}m%}"
-done
+() {
+  local color
+  for color in {000..255}; do
+    FG[$color]="%{[38;5;${color}m%}"
+    BG[$color]="%{[48;5;${color}m%}"
+  done
+}
 
 # Show all 256 colors with color number
 function spectrum_ls() {
   setopt localoptions nopromptsubst
   local ZSH_SPECTRUM_TEXT=${ZSH_SPECTRUM_TEXT:-Arma virumque cano Troiae qui primus ab oris}
+  local code
   for code in {000..255}; do
     print -P -- "$code: ${FG[$code]}${ZSH_SPECTRUM_TEXT}%{$reset_color%}"
   done
@@ -32,6 +36,7 @@ function spectrum_ls() {
 function spectrum_bls() {
   setopt localoptions nopromptsubst
   local ZSH_SPECTRUM_TEXT=${ZSH_SPECTRUM_TEXT:-Arma virumque cano Troiae qui primus ab oris}
+  local code
   for code in {000..255}; do
     print -P -- "$code: ${BG[$code]}${ZSH_SPECTRUM_TEXT}%{$reset_color%}"
   done
