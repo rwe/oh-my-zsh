@@ -35,7 +35,7 @@ function rvm_prompt_info() {
   echo "${ZSH_THEME_RUBY_PROMPT_PREFIX}${rvm_prompt:gs/%/%%}${ZSH_THEME_RUBY_PROMPT_SUFFIX}"
 }
 
-ZSH_THEME_RVM_PROMPT_OPTIONS="i v g"
+typeset -g ZSH_THEME_RVM_PROMPT_OPTIONS='i v g'
 
 
 # use this to enable users to see their ruby version, no matter which
