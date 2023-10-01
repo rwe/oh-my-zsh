@@ -5,12 +5,12 @@ autoload -U colors && colors
 setopt prompt_subst
 
 # Prompt function theming defaults
-ZSH_THEME_GIT_PROMPT_PREFIX="git:("   # Beginning of the git prompt, before the branch name
-ZSH_THEME_GIT_PROMPT_SUFFIX=")"       # End of the git prompt
-ZSH_THEME_GIT_PROMPT_DIRTY="*"        # Text to display if the branch is dirty
-ZSH_THEME_GIT_PROMPT_CLEAN=""         # Text to display if the branch is clean
-ZSH_THEME_RUBY_PROMPT_PREFIX="("
-ZSH_THEME_RUBY_PROMPT_SUFFIX=")"
+typeset -g ZSH_THEME_GIT_PROMPT_PREFIX="git:("   # Beginning of the git prompt, before the branch name
+typeset -g ZSH_THEME_GIT_PROMPT_SUFFIX=")"       # End of the git prompt
+typeset -g ZSH_THEME_GIT_PROMPT_DIRTY="*"        # Text to display if the branch is dirty
+typeset -g ZSH_THEME_GIT_PROMPT_CLEAN=""         # Text to display if the branch is clean
+typeset -g ZSH_THEME_RUBY_PROMPT_PREFIX="("
+typeset -g ZSH_THEME_RUBY_PROMPT_SUFFIX=")"
 
 
 # Use diff --color if available
@@ -24,7 +24,9 @@ fi
 [[ "${DISABLE_LS_COLORS:-}" != true ]] || return 0
 
 # Default coloring for BSD-based ls
-export LSCOLORS="Gxfxcxdxbxegedabagacad"
+if [[ -z "${LSCOLORS:-}" ]]; then
+  export LSCOLORS='Gxfxcxdxbxegedabagacad'
+fi
 
 # Default coloring for GNU-based ls
 if [[ -z "${LS_COLORS:-}" ]]; then
