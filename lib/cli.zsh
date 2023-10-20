@@ -903,7 +903,9 @@ function _omz::update {
   }
 
   # Run update script
-  zstyle -s ':omz:update' verbose verbose_mode || verbose_mode=default
+  local verbose_mode_
+  zstyle -s ':omz:update' verbose verbose_mode_ || verbose_mode_=default
+  declare -g verbose_mode="${verbose_mode_}"
   ZSH="$ZSH" command zsh -f "$ZSH/tools/upgrade.sh" -i -v $verbose_mode || return $?
 
   # Update last updated file
