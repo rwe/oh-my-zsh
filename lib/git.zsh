@@ -187,7 +187,7 @@ if zstyle -t ':omz:alpha:lib:git' async-prompt \
 
   # Register the async handler first. This needs to be done before
   # the async request prompt is run
-  precmd_functions=(_defer_async_git_register $precmd_functions)
+  add-zsh-hook precmd _defer_async_git_register
 elif zstyle -s ':omz:alpha:lib:git' async-prompt _style && [[ $_style == "force" ]]; then
   function git_prompt_info() {
     if [[ -n "${_OMZ_ASYNC_OUTPUT[_omz_git_prompt_info]}" ]]; then
