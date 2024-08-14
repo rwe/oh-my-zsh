@@ -33,7 +33,7 @@ function _omz_register_handler {
     || (( ${_omz_async_functions[(Ie)$1]} )); then
     return
   fi
-  _omz_async_functions+=("$1")
+  typeset -ga _omz_async_functions=("${_omz_async_functions[@]}" "$1")
   # let's add the hook to async_request if it's not there yet
   if (( ! ${precmd_functions[(Ie)_omz_async_request]} )) \
     && (( ${+functions[_omz_async_request]})); then
