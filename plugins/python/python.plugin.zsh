@@ -48,7 +48,7 @@ alias pyserver="python3 -m http.server"
 
 
 ## venv settings
-: ${PYTHON_VENV_NAME:=venv}
+typeset -g PYTHON_VENV_NAME="${PYTHON_VENV_NAME:-venv}"
 
 # Array of possible virtual environment names to look for, in order
 # -U for removing duplicates
