@@ -53,6 +53,8 @@ _kube_ps1_shell_type() {
 }
 
 _kube_ps1_init() {
+  # Locally run with "standard" zsh options. Avoids warnings on warn_create_global/warn_nested_var.
+  [[ "$(_kube_ps1_shell_type)" != zsh ]] || emulate -L zsh
   [[ -f "${_KUBE_PS1_DISABLE_PATH}" ]] && KUBE_PS1_ENABLED=off
 
   # Detect shell type once and cache it
@@ -97,6 +99,7 @@ _kube_ps1_init() {
 }
 
 _kube_ps1_color_fg() {
+  [[ "$(_kube_ps1_shell_type)" != zsh ]] || emulate -L zsh
   local _KUBE_PS1_FG_CODE
   case "${1}" in
     black) _KUBE_PS1_FG_CODE=0;;
@@ -130,6 +133,7 @@ _kube_ps1_color_fg() {
 }
 
 _kube_ps1_color_bg() {
+  [[ "$(_kube_ps1_shell_type)" != zsh ]] || emulate -L zsh
   local _KUBE_PS1_BG_CODE
   case "${1}" in
     black) _KUBE_PS1_BG_CODE=0;;
@@ -167,6 +171,7 @@ _kube_ps1_binary_check() {
 }
 
 _kube_ps1_symbol() {
+  [[ "$(_kube_ps1_shell_type)" != zsh ]] || emulate -L zsh
   # Exit early if symbol display is disabled
   [[ "${KUBE_PS1_SYMBOL_ENABLE}" == false ]] && return
 
@@ -261,6 +266,7 @@ _kube_ps1_file_newer_than() {
 _kube_ps1_prompt_update() {
   local return_code=$?
 
+  [[ "$(_kube_ps1_shell_type)" != zsh ]] || emulate -L zsh
   [[ "${KUBE_PS1_ENABLED}" == "off" ]] && return $return_code
 
   if ! _kube_ps1_binary_check "${KUBE_PS1_BINARY}"; then
@@ -300,6 +306,8 @@ _kube_ps1_prompt_update() {
 }
 
 _kube_ps1_get_context() {
+  [[ "$(_kube_ps1_shell_type)" != zsh ]] || emulate -L zsh
+
   if [[ "${KUBE_PS1_CONTEXT_ENABLE}" == true ]]; then
     KUBE_PS1_CONTEXT="$(${KUBE_PS1_BINARY} config current-context 2>/dev/null)"
     KUBE_PS1_CONTEXT="${KUBE_PS1_CONTEXT:-N/A}"
@@ -311,6 +319,8 @@ _kube_ps1_get_context() {
 }
 
 _kube_ps1_get_ns() {
+  [[ "$(_kube_ps1_shell_type)" != zsh ]] || emulate -L zsh
+
   if [[ "${KUBE_PS1_NS_ENABLE}" == true ]]; then
     KUBE_PS1_NAMESPACE="$(${KUBE_PS1_BINARY} config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
     KUBE_PS1_NAMESPACE="${KUBE_PS1_NAMESPACE:-N/A}"
@@ -322,6 +332,8 @@ _kube_ps1_get_ns() {
 }
 
 _kube_ps1_get_context_ns() {
+  [[ "$(_kube_ps1_shell_type)" != zsh ]] || emulate -L zsh
+
   # Set the command time
   if [[ "${_KUBE_PS1_SHELL}" == "bash" ]]; then
     if ((BASH_VERSINFO[0] > 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 2))); then
@@ -374,6 +386,8 @@ EOF
 }
 
 kubeon() {
+  [[ "$(_kube_ps1_shell_type)" != zsh ]] || emulate -L zsh
+
   if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
     _kubeon_usage
     return 0
@@ -389,6 +403,8 @@ kubeon() {
 }
 
 kubeoff() {
+  [[ "$(_kube_ps1_shell_type)" != zsh ]] || emulate -L zsh
+
   if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
     _kubeoff_usage
     return 0
@@ -406,6 +422,8 @@ kubeoff() {
 
 # Build our prompt
 kube_ps1() {
+  [[ "$(_kube_ps1_shell_type)" != zsh ]] || emulate -L zsh
+
   [[ "${KUBE_PS1_ENABLED}" == "off" ]] && return
   [[ -z "${KUBE_PS1_CONTEXT}" ]] && [[ "${KUBE_PS1_CONTEXT_ENABLE}" == true ]] && return
   [[ "${KUBE_PS1_CONTEXT}" == "N/A" ]] && [[ ${KUBE_PS1_HIDE_IF_NOCONTEXT} == true ]] && return
