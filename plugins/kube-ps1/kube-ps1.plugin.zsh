@@ -37,6 +37,7 @@ KUBE_PS1_SUFFIX="${KUBE_PS1_SUFFIX-)}"
 KUBE_PS1_HIDE_IF_NOCONTEXT="${KUBE_PS1_HIDE_IF_NOCONTEXT:-false}"
 
 _KUBE_PS1_KUBECONFIG_CACHE="${KUBECONFIG}"
+_KUBE_PS1_KUBECONFIG_CACHE_PWD="${PWD}"
 _KUBE_PS1_DISABLE_PATH="${HOME}/.kube/kube-ps1/disabled"
 _KUBE_PS1_LAST_TIME=0
 
@@ -276,12 +277,17 @@ _kube_ps1_prompt_update() {
     return $return_code
   fi
 
-  if [[ "${KUBECONFIG}" != "${_KUBE_PS1_KUBECONFIG_CACHE}" ]]; then
-    # User changed KUBECONFIG; unconditionally refetch.
+  if # User changed KUBECONFIG; unconditionally refetch.
+     [[ "${KUBECONFIG}" != "${_KUBE_PS1_KUBECONFIG_CACHE}" ]] ||
+     # The KUBECONFIG is path sensitive if any of the parts (separated by ':') do not start with '/'.
+     [[ "${PWD}" != "${_KUBE_PS1_KUBECONFIG_CACHE_PWD}" && "${KUBECONFIG:-/}" =~ (^|:)[^/] ]]; then
+    _KUBE_PS1_KUBECONFIG_CACHE_PWD="${PWD}"
     _KUBE_PS1_KUBECONFIG_CACHE=${KUBECONFIG}
     _kube_ps1_get_context_ns
     return $return_code
   fi
+
+  _KUBE_PS1_KUBECONFIG_CACHE_PWD="${PWD}"
 
   # kubectl will read the environment variable $KUBECONFIG
   # otherwise set it to ~/.kube/config
